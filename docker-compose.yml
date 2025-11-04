@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: django_db
+      POSTGRES_USER: django
+      POSTGRES_PASSWORD: django_pwd
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+# Optional: you can add pgbouncer as a connection pooler in front of Postgres for
+# true pooling. Example (commented):
+#  pgbouncer:
+#    image: edoburu/pgbouncer:1.15.0
+#    restart: unless-stopped
+#    ports:
+#      - "6432:6432"
+#    volumes:
+#      - ./backend/pgbouncer:/etc/pgbouncer
+#    depends_on:
+#      - db
+
+volumes:
+  db_data:
