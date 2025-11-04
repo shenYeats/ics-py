@@ -546,7 +546,7 @@ docker-compose up -d
 
 #### 依赖安装问题
 
-1. 确保 Node.js 版本 >= 16
+1. Node.js 版本 >= 14.21.3
 2. 删除 `node_modules` 和 `package-lock.json` 后重新安装
 3. 检查网络连接是否正常
 
