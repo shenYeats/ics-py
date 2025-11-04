@@ -14,8 +14,8 @@
 - ✅ RESTful API
 
 ### 前端特性
-- ✅ React 18 + Vite
-- ✅ Material-UI (MUI) 组件库
+- ✅ React 18 + Vite (兼容 Node.js 14.21.3)
+- ✅ Material-UI (MUI) 5.x 组件库
 - ✅ 响应式设计
 - ✅ JWT 认证集成
 - ✅ 现代化用户界面
@@ -147,9 +147,15 @@ npx create-vite frontend --template react
 # 进入前端目录
 cd frontend
 
-# 安装 Material-UI 和 axios
-npm install @mui/material @emotion/react @emotion/styled @mui/icons-material axios
+# 安装兼容 Node.js 14 的依赖版本
+npm install @mui/material@^5.14.20 @emotion/react@^11.10.6 @emotion/styled@^11.10.6 @mui/icons-material@^5.11.16 axios@^1.4.0
 ```
+
+**注意**: 项目已配置为兼容 Node.js 14.21.3 的版本：
+- React 18.2.0
+- Material-UI 5.14.20
+- Vite 4.5.0
+- ESLint 8.55.0
 
 ### 3. 启动前端开发服务器
 
