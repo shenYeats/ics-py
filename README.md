@@ -463,14 +463,6 @@ CORS_ALLOWED_ORIGINS = [
 
 并安装 `django-cors-headers` 包。
 
-## 贡献指南
-
-1. Fork 项目
-2. 创建功能分支
-3. 提交更改
-4. 推送到分支
-5. 创建 Pull Request
-
 ## 许可证
 
 MIT License
