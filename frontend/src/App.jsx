@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
+import { Typography } from '@mui/material';
+import { Login, Dashboard, AdminLayout, UserManagement } from './components';
 import { authAPI } from './services/api';
 
 // 创建Material-UI主题
@@ -32,6 +32,7 @@ const theme = createTheme({
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState('dashboard');
 
   // 检查用户登录状态
   useEffect(() => {
@@ -71,6 +72,45 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
+    setCurrentPage('dashboard');
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // 渲染当前页面内容
+  const renderCurrentPage = () => {
+    switch (currentPage) {
+      case 'dashboard':
+        return <Dashboard user={user} onLogout={handleLogout} />;
+      case 'users':
+        return <UserManagement />;
+      case 'permissions':
+        return (
+          <div>
+            <Typography variant="h4" gutterBottom>
+              权限管理
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              权限管理功能开发中...
+            </Typography>
+          </div>
+        );
+      case 'settings':
+        return (
+          <div>
+            <Typography variant="h4" gutterBottom>
+              系统设置
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              系统设置功能开发中...
+            </Typography>
+          </div>
+        );
+      default:
+        return <Dashboard user={user} onLogout={handleLogout} />;
+    }
   };
 
   if (loading) {
@@ -93,7 +133,18 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {user ? (
-        <Dashboard user={user} onLogout={handleLogout} />
+        user.role === 'admin' ? (
+          <AdminLayout 
+            user={user} 
+            onLogout={handleLogout}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          >
+            {renderCurrentPage()}
+          </AdminLayout>
+        ) : (
+          <Dashboard user={user} onLogout={handleLogout} />
+        )
       ) : (
         <Login onLoginSuccess={handleLoginSuccess} />
       )}

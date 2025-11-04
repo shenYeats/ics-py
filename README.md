@@ -41,7 +41,12 @@
 │   ├── src/
 │   │   ├── components/     # React 组件
 │   │   │   ├── Login.jsx  # 登录页面
-│   │   │   └── Dashboard.jsx  # 仪表板
+│   │   │   ├── Dashboard.jsx  # 仪表板
+│   │   │   ├── AdminLayout.jsx  # 管理后台布局
+│   │   │   ├── UserManagement.jsx  # 用户管理
+│   │   │   └── index.js   # 全局组件导出
+│   │   ├── utils/         # 工具函数
+│   │   │   └── mui.js     # Material-UI 全局导出
 │   │   ├── services/      # API 服务
 │   │   │   └── api.js     # 前后端交互接口
 │   │   └── App.jsx        # 主应用组件
@@ -58,8 +63,13 @@
 
 ```bash
 # 安装 Python 依赖
-pip install django psycopg2-binary django-db-connections-pool djangorestframework djangorestframework-simplejwt
+pip install django psycopg2-binary django-db-connections-pool djangorestframework djangorestframework-simplejwt PyJWT django-cors-headers
 ```
+
+**注意**: 确保安装了以下关键包：
+- `djangorestframework-simplejwt`: JWT认证支持
+- `PyJWT`: JWT令牌处理
+- `django-cors-headers`: 跨域请求支持
 
 ### 2. 创建 Django 项目
 
@@ -289,6 +299,7 @@ npm run dev
 - **JWT 认证**: 自动处理 token 刷新和过期
 - **状态管理**: 使用 React Hooks 管理应用状态
 - **错误处理**: 完善的错误提示和处理机制
+- **管理后台**: 完整的管理后台界面，支持用户管理
 
 ### 前后端交互
 
@@ -297,6 +308,19 @@ npm run dev
 - **认证 API**: 登录、登出、token 刷新
 - **用户管理 API**: 用户列表、详情、创建、更新、删除
 - **权限管理 API**: 权限列表、角色权限管理
+
+### 管理后台功能
+
+#### 用户管理
+- **用户列表**: 查看所有用户信息，包括邮箱、姓名、角色、状态等
+- **创建用户**: 支持创建新用户，设置邮箱、密码、角色等信息
+- **编辑用户**: 修改用户信息，包括角色、状态、姓名等
+- **删除用户**: 安全删除用户账号
+- **用户统计**: 显示各类用户的统计信息
+
+#### 权限控制
+- **角色区分**: 管理员拥有完整权限，普通用户只能查看基础信息
+- **界面适配**: 根据用户角色显示不同的界面和功能
 
 ## 权限系统
 
@@ -370,6 +394,23 @@ class AnotherView(APIView):
 
 ### 前端开发
 
+#### 组件引用
+
+项目使用标准的组件导入方式：
+
+**组件引用**：
+```javascript
+// 使用全局组件导出
+import { Login, Dashboard, AdminLayout, UserManagement } from './components';
+```
+
+**Material-UI 组件引用**：
+```javascript
+// 使用标准 Material-UI 导入
+import { Button, Typography, Container, Paper } from '@mui/material';
+import { Add, Edit, Delete } from '@mui/icons-material';
+```
+
 #### 添加新的 API 接口
 
 在 `frontend/src/services/api.js` 中添加新的 API 方法：
@@ -387,18 +428,82 @@ export const newAPI = {
 
 ```javascript
 import React from 'react';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, Container, Paper } from '@mui/material';
+import { Add, Edit } from '@mui/icons-material';
 
 const NewComponent = ({ data }) => {
   return (
-    <div>
-      <Typography variant="h6">新组件</Typography>
-      <Button variant="contained">操作按钮</Button>
-    </div>
+    <Container>
+      <Paper>
+        <Typography variant="h6">新组件</Typography>
+        <Button variant="contained" startIcon={<Add />}>操作按钮</Button>
+      </Paper>
+    </Container>
   );
 };
 
 export default NewComponent;
+```
+
+**重要**: 创建新组件后，记得在 `frontend/src/components/index.js` 中导出：
+
+```javascript
+export { default as NewComponent } from './NewComponent';
+```
+
+### 管理后台开发
+
+#### 添加新的管理功能
+
+1. 在 `frontend/src/components/` 中创建新的管理组件
+2. 在 `frontend/src/App.jsx` 的 `renderCurrentPage` 函数中添加路由
+3. 在 `AdminLayout` 组件的 `menuItems` 中添加菜单项
+
+#### 权限管理组件示例
+
+```javascript
+import React, { useState, useEffect } from 'react';
+import { Container, Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { permissionAPI } from '../services/api';
+
+const PermissionManagement = () => {
+  const [permissions, setPermissions] = useState([]);
+
+  useEffect(() => {
+    // 获取权限列表
+    permissionAPI.getPermissions().then(response => {
+      setPermissions(response.data);
+    });
+  }, []);
+
+  return (
+    <Container maxWidth="lg">
+      <Typography variant="h4" gutterBottom>权限管理</Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>权限名称</TableCell>
+              <TableCell>权限代码</TableCell>
+              <TableCell>描述</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {permissions.map(permission => (
+              <TableRow key={permission.id}>
+                <TableCell>{permission.name}</TableCell>
+                <TableCell>{permission.code}</TableCell>
+                <TableCell>{permission.description}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
+  );
+};
+
+export default PermissionManagement;
 ```
 
 ## 部署说明
@@ -451,17 +556,38 @@ docker-compose up -d
 
 #### CORS 问题
 
-如果遇到跨域问题，需要在 Django 设置中添加：
+项目已配置 CORS 支持，如果遇到跨域问题，请确保：
 
+1. 已安装 `django-cors-headers` 包：
+```bash
+pip install django-cors-headers
+```
+
+2. 在 `backend/settings.py` 中已正确配置：
 ```python
-# backend/settings.py
+INSTALLED_APPS = [
+    # ... 其他应用
+    'corsheaders',
+]
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 必须放在最前面
+    # ... 其他中间件
+]
+
+# CORS配置
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 ```
 
-并安装 `django-cors-headers` 包。
+3. 确保后端服务器正在运行在 http://127.0.0.1:8000
+4. 确保前端服务器正在运行在 http://localhost:5173
 
 ## 许可证
 

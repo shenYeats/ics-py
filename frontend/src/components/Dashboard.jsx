@@ -5,18 +5,17 @@ import {
   Typography,
   Box,
   Button,
+  Grid,
   Card,
   CardContent,
-  Grid,
-  Avatar,
   Chip,
+  Avatar,
   Divider,
-} from '@mui/material';
-import {
   Person,
   Security,
+  Settings,
   ExitToApp,
-} from '@mui/icons-material';
+} from '../utils/mui';
 import { authAPI } from '../services/api';
 
 const Dashboard = ({ user, onLogout }) => {
