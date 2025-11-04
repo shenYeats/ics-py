@@ -1,9 +1,10 @@
-# Django PostgreSQL 项目
+# 全栈项目 - Django + React
 
-这是一个使用 Django 和 PostgreSQL 构建的后端项目，包含完整的权限管理系统和数据库连接池。
+这是一个完整的全栈项目，包含 Django 后端和 React 前端，支持 PostgreSQL 数据库、权限管理系统和现代化的用户界面。
 
 ## 项目特性
 
+### 后端特性
 - ✅ Django 5.2.7
 - ✅ PostgreSQL 数据库
 - ✅ 数据库连接池
@@ -11,6 +12,14 @@
 - ✅ 自定义权限系统
 - ✅ 角色管理
 - ✅ RESTful API
+
+### 前端特性
+- ✅ React 18 + Vite
+- ✅ Material-UI (MUI) 组件库
+- ✅ 响应式设计
+- ✅ JWT 认证集成
+- ✅ 现代化用户界面
+- ✅ 前后端完全分离
 
 ## 项目结构
 
@@ -28,15 +37,24 @@
 │   ├── urls.py           # 应用路由
 │   └── management/commands/
 │       └── init_permissions.py  # 权限初始化命令
-├── frontend/               # 前端项目
+├── frontend/               # React 前端项目
+│   ├── src/
+│   │   ├── components/     # React 组件
+│   │   │   ├── Login.jsx  # 登录页面
+│   │   │   └── Dashboard.jsx  # 仪表板
+│   │   ├── services/      # API 服务
+│   │   │   └── api.js     # 前后端交互接口
+│   │   └── App.jsx        # 主应用组件
+│   ├── package.json       # 前端依赖配置
+│   └── vite.config.js     # Vite 配置
 ├── manage.py              # Django 管理脚本
 ├── .env.example           # 环境变量示例
 └── README.md             # 项目文档
 ```
 
-## 安装和配置
+## 后端安装和配置
 
-### 1. 安装依赖
+### 1. 安装后端依赖
 
 ```bash
 # 安装 Python 依赖
@@ -114,15 +132,53 @@ python manage.py createsuperuser
 
 按照提示输入邮箱和密码。
 
-## 运行项目
+## 前端安装和配置
 
-### 启动开发服务器
+### 1. 创建 React 项目
 
 ```bash
+# 使用 Vite 创建 React 项目
+npx create-vite frontend --template react
+```
+
+### 2. 安装前端依赖
+
+```bash
+# 进入前端目录
+cd frontend
+
+# 安装 Material-UI 和 axios
+npm install @mui/material @emotion/react @emotion/styled @mui/icons-material axios
+```
+
+### 3. 启动前端开发服务器
+
+```bash
+# 开发模式启动
+npm run dev
+```
+
+前端服务器将在 http://localhost:5173 启动。
+
+## 运行项目
+
+### 启动后端服务器
+
+```bash
+# 在后端目录中
 python manage.py runserver
 ```
 
-服务器将在 http://127.0.0.1:8000 启动。
+后端服务器将在 http://127.0.0.1:8000 启动。
+
+### 启动前端服务器
+
+```bash
+# 在前端目录中
+npm run dev
+```
+
+前端服务器将在 http://localhost:5173 启动。
 
 ## API 文档
 
@@ -212,6 +268,30 @@ python manage.py runserver
 - **URL**: `GET /api/auth/user-permissions/`
 - **权限**: 已认证用户
 
+## 前端功能
+
+### 主要组件
+
+- **Login**: 用户登录页面，支持邮箱密码认证
+- **Dashboard**: 登录后的主仪表板，显示用户信息和系统功能
+- **API Service**: 完整的 RESTful API 交互服务
+
+### 前端特性
+
+- **Material-UI 设计**: 使用 Material Design 设计语言
+- **响应式布局**: 适配桌面和移动设备
+- **JWT 认证**: 自动处理 token 刷新和过期
+- **状态管理**: 使用 React Hooks 管理应用状态
+- **错误处理**: 完善的错误提示和处理机制
+
+### 前后端交互
+
+前端通过 `src/services/api.js` 与后端进行通信，包含：
+
+- **认证 API**: 登录、登出、token 刷新
+- **用户管理 API**: 用户列表、详情、创建、更新、删除
+- **权限管理 API**: 权限列表、角色权限管理
+
 ## 权限系统
 
 ### 用户角色
@@ -260,13 +340,15 @@ DATABASES = {
 
 ## 开发说明
 
-### 添加新的权限
+### 后端开发
+
+#### 添加新的权限
 
 1. 在 `auth_app/permissions.py` 的 `PermissionCodes` 类中添加新的权限代码
 2. 在 `auth_app/management/commands/init_permissions.py` 中添加权限定义
 3. 运行 `python manage.py init_permissions` 初始化新权限
 
-### 自定义权限使用
+#### 自定义权限使用
 
 在视图类中使用自定义权限：
 
@@ -278,6 +360,39 @@ class MyView(APIView):
     
 class AnotherView(APIView):
     permission_classes = [HasPermission(PermissionCodes.DATA_WRITE)]  # 需要特定权限
+```
+
+### 前端开发
+
+#### 添加新的 API 接口
+
+在 `frontend/src/services/api.js` 中添加新的 API 方法：
+
+```javascript
+export const newAPI = {
+  getData: () => api.get('/api/new-endpoint/'),
+  createData: (data) => api.post('/api/new-endpoint/', data),
+};
+```
+
+#### 创建新的组件
+
+在 `frontend/src/components/` 目录中创建新的 React 组件：
+
+```javascript
+import React from 'react';
+import { Button, Typography } from '@mui/material';
+
+const NewComponent = ({ data }) => {
+  return (
+    <div>
+      <Typography variant="h6">新组件</Typography>
+      <Button variant="contained">操作按钮</Button>
+    </div>
+  );
+};
+
+export default NewComponent;
 ```
 
 ## 部署说明
@@ -300,17 +415,47 @@ docker-compose up -d
 
 ## 故障排除
 
-### 数据库连接问题
+### 后端问题
+
+#### 数据库连接问题
 
 1. 确保 PostgreSQL 服务正在运行
 2. 检查 `.env` 文件中的数据库配置
 3. 验证数据库用户权限
 
-### 权限初始化问题
+#### 权限初始化问题
 
 1. 确保已运行数据库迁移
 2. 检查 `init_permissions` 命令输出
 3. 验证权限数据是否正确创建
+
+### 前端问题
+
+#### 依赖安装问题
+
+1. 确保 Node.js 版本 >= 16
+2. 删除 `node_modules` 和 `package-lock.json` 后重新安装
+3. 检查网络连接是否正常
+
+#### API 连接问题
+
+1. 确保后端服务器正在运行
+2. 检查 `frontend/src/services/api.js` 中的 baseURL 配置
+3. 查看浏览器控制台错误信息
+
+#### CORS 问题
+
+如果遇到跨域问题，需要在 Django 设置中添加：
+
+```python
+# backend/settings.py
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+```
+
+并安装 `django-cors-headers` 包。
 
 ## 贡献指南
 
