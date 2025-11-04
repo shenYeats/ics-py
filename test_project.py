@@ -9,7 +9,7 @@ import django
 import sys
 
 # 设置Django环境
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings_sqlite')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 django.setup()
@@ -44,7 +44,7 @@ def test_user_creation():
     print(f"当前用户数量: {user_count}")
     
     if user_count == 0:
-        print("请先创建超级用户: python manage.py createsuperuser --settings=backend.settings_sqlite")
+        print("请先创建超级用户: python manage.py createsuperuser")
     else:
         users = User.objects.all()
         for user in users:
@@ -92,7 +92,7 @@ def main():
         
         print("✅ 项目功能测试完成！")
         print("\n下一步:")
-        print("1. 启动服务器: python manage.py runserver --settings=backend.settings_sqlite")
+        print("1. 启动服务器: python manage.py runserver")
         print("2. 访问 http://127.0.0.1:8000/api/auth/ 测试API")
         print("3. 使用Postman或curl测试认证接口")
         

@@ -70,6 +70,8 @@ pip install django psycopg2-binary django-db-connections-pool djangorestframewor
 - `djangorestframework-simplejwt`: JWT认证支持
 - `PyJWT`: JWT令牌处理
 - `django-cors-headers`: 跨域请求支持
+- `psycopg2-binary`: PostgreSQL数据库连接
+- `django-db-connections-pool`: 数据库连接池
 
 ### 2. 创建 Django 项目
 

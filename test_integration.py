@@ -11,7 +11,7 @@ import requests
 import json
 
 # 设置Django环境
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings_sqlite')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 django.setup()
@@ -30,7 +30,7 @@ def test_backend_api():
         # 首先检查是否有用户
         user_count = User.objects.count()
         if user_count == 0:
-            print("   ⚠️  没有用户，请先创建用户: python manage.py createsuperuser --settings=backend.settings_sqlite")
+            print("   ⚠️  没有用户，请先创建用户: python manage.py createsuperuser")
             return False
         
         # 获取第一个用户用于测试
@@ -171,7 +171,7 @@ def main():
     if backend_ok and frontend_ok and integration_ok:
         print("\n🎉 所有测试通过！项目集成正常。")
         print("\n🚀 下一步:")
-        print("1. 确保后端服务器运行: python manage.py runserver --settings=backend.settings_sqlite")
+        print("1. 确保后端服务器运行: python manage.py runserver")
         print("2. 确保前端服务器运行: cd frontend && npm run dev")
         print("3. 访问 http://localhost:5173 测试完整功能")
         print("4. 使用创建的用户账号登录测试")
