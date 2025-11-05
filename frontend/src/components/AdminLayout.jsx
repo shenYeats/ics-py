@@ -19,24 +19,29 @@ import {
   Security,
   Settings,
   ExitToApp,
+  ChevronLeft,
+  ChevronRight,
 } from '../utils/mui';
 import { authAPI } from '../services/api';
 
 const drawerWidth = 240;
+const collapsedDrawerWidth = 64;
 
 const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleCollapseToggle = () => {
+    setCollapsed(!collapsed);
+  };
+
   const handleLogout = async () => {
     try {
-      const refreshToken = localStorage.getItem('refresh_token');
-      if (refreshToken) {
-        await authAPI.logout(refreshToken);
-      }
+      await authAPI.logout();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -58,10 +63,27 @@ const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) =>
 
   const drawer = (
     <div>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          管理后台
-        </Typography>
+      <Toolbar sx={{ 
+        display: 'flex', 
+        justifyContent: collapsed ? 'center' : 'space-between',
+        alignItems: 'center',
+        minHeight: '64px !important'
+      }}>
+        {!collapsed && (
+          <Typography variant="h6" noWrap component="div">
+            管理后台
+          </Typography>
+        )}
+        <IconButton 
+          onClick={handleCollapseToggle}
+          size="small"
+          sx={{ 
+            color: 'inherit',
+            ...(collapsed && { margin: '0 auto' })
+          }}
+        >
+          {collapsed ? <ChevronRight /> : <ChevronLeft />}
+        </IconButton>
       </Toolbar>
       <Divider />
       <List>
@@ -70,11 +92,20 @@ const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) =>
             <ListItemButton
               selected={currentPage === item.page}
               onClick={() => onPageChange(item.page)}
+              sx={{
+                justifyContent: collapsed ? 'center' : 'initial',
+                px: collapsed ? 1 : 2,
+              }}
             >
-              <ListItemIcon>
+              <ListItemIcon
+                sx={{
+                  minWidth: collapsed ? 0 : 56,
+                  justifyContent: 'center',
+                }}
+              >
                 {item.icon}
               </ListItemIcon>
-              <ListItemText primary={item.text} />
+              {!collapsed && <ListItemText primary={item.text} />}
             </ListItemButton>
           </ListItem>
         ))}
@@ -82,11 +113,22 @@ const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) =>
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout}>
-            <ListItemIcon>
+          <ListItemButton 
+            onClick={handleLogout}
+            sx={{
+              justifyContent: collapsed ? 'center' : 'initial',
+              px: collapsed ? 1 : 2,
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: collapsed ? 0 : 56,
+                justifyContent: 'center',
+              }}
+            >
               <ExitToApp />
             </ListItemIcon>
-            <ListItemText primary="退出登录" />
+            {!collapsed && <ListItemText primary="退出登录" />}
           </ListItemButton>
         </ListItem>
       </List>
@@ -98,8 +140,9 @@ const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) =>
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          width: { sm: `calc(100% - ${collapsed ? collapsedDrawerWidth : drawerWidth}px)` },
+          ml: { sm: `${collapsed ? collapsedDrawerWidth : drawerWidth}px` },
+          transition: 'width 0.3s, margin-left 0.3s',
         }}
       >
         <Toolbar>
@@ -122,7 +165,11 @@ const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) =>
       </AppBar>
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { sm: collapsed ? collapsedDrawerWidth : drawerWidth }, 
+          flexShrink: { sm: 0 },
+          transition: 'width 0.3s',
+        }}
         aria-label="mailbox folders"
       >
         {/* 移动端抽屉 */}
@@ -145,7 +192,12 @@ const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) =>
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: collapsed ? collapsedDrawerWidth : drawerWidth,
+              transition: 'width 0.3s',
+              overflowX: 'hidden',
+            },
           }}
           open
         >
@@ -154,7 +206,12 @@ const AdminLayout = ({ children, user, onLogout, currentPage, onPageChange }) =>
       </Box>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{ 
+          flexGrow: 1, 
+          p: 3, 
+          width: { sm: `calc(100% - ${collapsed ? collapsedDrawerWidth : drawerWidth}px)` },
+          transition: 'width 0.3s',
+        }}
       >
         <Toolbar />
         <Container maxWidth="lg">

@@ -21,10 +21,7 @@ import { authAPI } from '../services/api';
 const Dashboard = ({ user, onLogout }) => {
   const handleLogout = async () => {
     try {
-      const refreshToken = localStorage.getItem('refresh_token');
-      if (refreshToken) {
-        await authAPI.logout(refreshToken);
-      }
+      await authAPI.logout();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

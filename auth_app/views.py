@@ -47,16 +47,9 @@ def login(request):
 @permission_classes([permissions.IsAuthenticated])
 def logout(request):
     """用户登出接口"""
-    try:
-        refresh_token = request.data.get('refresh_token')
-        token = RefreshToken(refresh_token)
-        token.blacklist()
-        return Response({'message': '成功登出'})
-    except Exception as e:
-        return Response(
-            {'error': '无效的刷新令牌'}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
+    # 简化登出逻辑，直接返回成功
+    # 前端会清除本地存储的token，使token自然过期
+    return Response({'message': '成功登出'})
 
 
 class UserListView(generics.ListCreateAPIView):

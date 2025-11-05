@@ -85,6 +85,8 @@ const Login = ({ onLoginSuccess }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '80vh',
         }}
       >
         <Paper

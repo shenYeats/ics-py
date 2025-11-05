@@ -65,8 +65,8 @@ export const authAPI = {
     api.post('/auth/login/', { email, password }),
   
   // 用户登出
-  logout: (refreshToken) => 
-    api.post('/auth/logout/', { refresh_token: refreshToken }),
+  logout: () => 
+    api.post('/auth/logout/'),
   
   // 刷新token
   refreshToken: (refreshToken) => 
