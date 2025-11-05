@@ -1,0 +1,16 @@
+Django==5.2.7
+psycopg2-binary>=2.9.0
+djangorestframework>=3.14.0
+djangorestframework-simplejwt>=5.2.0
+# django-db-connections-pool is not available on PyPI under this exact name
+# If you need a connection-pool library, either install a maintained package
+# or rely on Django's CONN_MAX_AGE setting. To skip installing, the line is
+# commented out. If you have a GitHub URL for the library, add it here, e.g.: 
+# git+https://github.com/<owner>/django-db-connections-pool.git
+#django-db-connections-pool>=1.0.2
+python-dotenv>=1.0.0
+gunicorn>=20.1.0
+django-cors-headers>=4.0.0
+# Optional, for production static file serving or other utilities
+# whitenoise>=6.0.0
+# pytz>=2023.3
